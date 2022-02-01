@@ -856,8 +856,8 @@ plot_abc2 <- function(res, stock.name=NULL, fishseason=0, detABC=2, abc4=FALSE, 
         geom_point(aes(x=res$Current_Status[1]*100,y=res$alpha),color=2,size=4)+
         geom_vline(data=data_BRP,mapping=aes(xintercept=value_ratio*100,color=BRP), size = 0.9*1.5, linetype = linetype.set)+
         ggrepel::geom_label_repel(data=data_BRP,
-                                  mapping=aes(x=value_ratio*100, y=ifelse(res$BRP[3] != 0,c(1.2,1.0,0.8),c(1,0.8)), label=legend.labels),
-                                  box.padding=0.5,nudge_y=ifelse(res$BRP[3] != 0,c(1.2,1,0.8),c(1.2,1))) +
+                                  mapping=aes(x=value_ratio*100, y=ifelse(res$BRP[3] != 0,c(0.5,0.4,0.8),c(0.5,0.4)), label=legend.labels),
+                                  box.padding=0.5,nudge_y=ifelse(res$BRP[3] != 0,c(0.4,0.3,0.7),c(0.4,0.3))) +
         scale_color_manual(name="",values=rev(c(col.BRP)), guide=FALSE)+#,labels=rev(c(legend.labels)))+
         theme_bw()+theme_custom()+
         ggtitle("")+
@@ -875,8 +875,8 @@ plot_abc2 <- function(res, stock.name=NULL, fishseason=0, detABC=2, abc4=FALSE, 
           geom_point(aes(x=res$Current_Status[1]*100,y=res$alpha),color="red",size=4)+
           geom_vline(data=data_BRP,mapping=aes(xintercept=value_ratio*100,color=BRP), size = 0.9*1.5, linetype = linetype.set)+
           ggrepel::geom_label_repel(data=data_BRP,
-                                    mapping=aes(x=value_ratio*100, y=ifelse(res$BRP[3] != 0,c(0.9,1.0,1.1),c(0.9,1)), label=legend.labels,family = font_MAC),
-                                    box.padding=0.5,nudge_y=ifelse(res$BRP[3] != 0,c(1.0,1.1,1.2),c(1,1.2))) +
+                                    mapping=aes(x=value_ratio*100, y=ifelse(res$BRP[3] != 0,c(0.5,0.4,0.8),c(0.5,0.4)), label=legend.labels,family = font_MAC),
+                                    box.padding=0.5,nudge_y=ifelse(res$BRP[3] != 0,c(0.4,0.3,0.7),c(0.4,0.3))) +
           scale_color_manual(name="",values=rev(c(col.BRP)), guide="none")+ #,labels=rev(c(legend.labels)))+
           theme_bw()+theme_custom()+
           ggtitle("")+
@@ -904,8 +904,8 @@ plot_abc2 <- function(res, stock.name=NULL, fishseason=0, detABC=2, abc4=FALSE, 
         geom_point(aes(x=res$Current_Status[1]*100,y=res$alpha),color="red",size=4)+
         geom_vline(data=data_BRP,mapping=aes(xintercept=value_ratio*100,color=BRP), size = 0.9*1.5, linetype = linetype.set)+
         ggrepel::geom_label_repel(data=data_BRP,
-                                  mapping=aes(x=value_ratio*100, y=ifelse(res$BRP[3] != 0,c(0.9,1.0,1.1),c(0.9,1)), label=legend.labels,family = font_MAC),
-                                  box.padding=0.5,nudge_y=ifelse(res$BRP[3] != 0,c(1.0,1.1,1.2),c(1,1.2))) +
+                                  mapping=aes(x=value_ratio*100, y=ifelse(res$BRP[3] != 0,c(0.5,0.4,0.8),c(0.5,0.4)), label=legend.labels,family = font_MAC),
+                                  box.padding=0.5,nudge_y=ifelse(res$BRP[3] != 0,c(0.4,0.3,0.7),c(0.4,0.3))) +
         scale_color_manual(name="",values=rev(c(col.BRP)), guide="none" )+ #,labels=rev(c(legend.labels)))+
         theme_bw()+theme_custom()+
         ggtitle("")+
@@ -923,8 +923,8 @@ plot_abc2 <- function(res, stock.name=NULL, fishseason=0, detABC=2, abc4=FALSE, 
           geom_point(aes(x=res$Current_Status[1]*100,y=res$alpha),color="red",size=4)+
           geom_vline(data=data_BRP,mapping=aes(xintercept=value_ratio*100,color=BRP), size = 0.9*1.5, linetype = linetype.set)+
           ggrepel::geom_label_repel(data=data_BRP,
-                                    mapping=aes(x=value_ratio*100, y=ifelse(res$BRP[3] != 0,c(0.9,1.0,1.1),c(0.9,1)), label=legend.labels,family = font_MAC),
-                                    box.padding=0.5,nudge_y=ifelse(res$BRP[3] != 0,c(1.0,1.1,1.2),c(1,1.2))) +
+                                    mapping=aes(x=value_ratio*100, y=ifelse(res$BRP[3] != 0,c(0.5,0.4,0.8),c(0.5,0.4)), label=legend.labels,family = font_MAC),
+                                    box.padding=0.5,nudge_y=ifelse(res$BRP[3] != 0,c(0.4,0.3,0.7),c(0.4,0.3))) +
           scale_color_manual(name="",values=rev(c(col.BRP)), guide="none" )+ #,labels=rev(c(legend.labels)))+
           theme_bw()+theme_custom()+
           ggtitle("")+
@@ -1772,7 +1772,7 @@ plot_abc2_multiBT <- function(res, stock.name=NULL, fishseason=0, abc4=FALSE, fi
 
 #' 複数の2系ABC計算結果を同時プロットするための関数
 #'
-#' @param res.list calc_abc2の返り値
+#' @param res.list calc_abc2の返り値。比較結果が多すぎるとみづらくなるので一度に比較するのは５つまで。
 #' @param fishseason  X軸のラベルを変更（0なら年、1なら漁期年)
 #' @param abc4  北海道東部の跨り資源で使用する図を描画（TRUEなら使用、デフォルトはFALSE））
 #' @param cpueunit  資源量指標値の縦軸見出しに追記したい指標値の単位（例えば"（トン/網）"のように指定する）
@@ -1780,7 +1780,7 @@ plot_abc2_multiBT <- function(res, stock.name=NULL, fishseason=0, abc4=FALSE, fi
 #' @param RP  資源量指標値/年のプロットでReference Point（目標・限界管理基準線）を載せる・載せない（デフォルトはTRUE、FALSEでは直近年の資源量指標値をポイントでハイライトする）
 #' @export
 #'
-plot_abc2_difpara <- function(res.list, stock.name=NULL, fishseason=0, detABC=0, abc4=FALSE, cpueunit="", fillarea=FALSE, RP=TRUE, leftalign=FALSE, proposal=TRUE, hcrdist=FALSE,BThcr=FALSE){
+plot_abc2_multires <- function(res.list, stock.name=NULL, fishseason=0, detABC=0, abc4=FALSE, cpueunit="", fillarea=FALSE, RP=TRUE, leftalign=FALSE, proposal=TRUE, hcrdist=FALSE,BThcr=FALSE){
   font_MAC <- "HiraginoSans-W3"#"Japan1GothicBBB"#
 
   #結果比較の限界は５個まで
@@ -1793,10 +1793,11 @@ plot_abc2_difpara <- function(res.list, stock.name=NULL, fishseason=0, detABC=0,
   years <- res.list[[1]]$arglist$ccdata$year
   last.year <- rev(years)[1]
   labels2<-labels2.1<-labels2.2<-c()
+
   for(i in 1:length(res.list)){
     if(i==1) data_catch<- tibble(year=c((last.year-res.list[[i]]$arglist$n.catch+1):last.year,last.year+2),
                                                    catch=c(rep(res.list[[i]]$mean.catch,res.list[[i]]$arglist$n.catch),res.list[[i]]$ABC),
-                                                   type=c(rep(str_c(res.list[[i]]$arglist$n.catch,"年平均漁獲量"),res.list[[i]]$arglist$n.catch),paste0(i,"番目ABC")))
+                                                   type=c(rep(str_c("平均漁獲量(",res.list[[1]]$arglist$n.catch,"年平均)"),res.list[[i]]$arglist$n.catch),paste0(i,"番目ABC")))
     else data_catch <- rbind(data_catch,tibble(year=last.year+2,
                                    catch=c(res.list[[i]]$ABC),
                                    type=c(paste0(i,"番目ABC"))))
@@ -1805,9 +1806,9 @@ plot_abc2_difpara <- function(res.list, stock.name=NULL, fishseason=0, detABC=0,
     labels2.2 <- c(labels2.2,paste(i,"番目",max(years)+2,"年",gsub("年","",year.axis.label),"の予測値",sep=""))
   }
 
-  legend.labels2 <-c(str_c(res.list[[1]]$arglist$n.catch,"年平均漁獲量"),labels2)
-  legend.labels2.1 <-c(str_c(res.list[[1]]$arglist$n.catch,"年平均漁獲量"),labels2.1)
-  legend.labels2.2 <-c(str_c(res.list[[1]]$arglist$n.catch,"年平均漁獲量"),labels2.2)
+  legend.labels2 <-c(str_c("平均漁獲量(",res.list[[1]]$arglist$n.catch,"年平均)"),labels2)
+  legend.labels2.1 <-c(str_c("平均漁獲量(",res.list[[1]]$arglist$n.catch,"年平均)"),labels2.1)
+  legend.labels2.2 <-c(str_c("平均漁獲量(",res.list[[1]]$arglist$n.catch,"年平均)"),labels2.2)
 
   col.BRP.hcr <- col.BRP
   data_BRP_hcr <- tibble(BRP=names(res.list[[1]]$BRP),value_obs=res.list[[1]]$Obs_BRP, value_ratio=res.list[[1]]$BRP)
@@ -1878,7 +1879,15 @@ plot_abc2_difpara <- function(res.list, stock.name=NULL, fishseason=0, detABC=0,
       theme(legend.position="top",legend.justification = c(1,0))
   }
 
-    for(i in 1:length(res.list)){
+  Currentalphas<-c()
+  size.hcr.points<-c()
+  for(i in 1:length(res.list)){
+    Currentalphas<-rbind(Currentalphas,tibble(x=res.list[[i]]$Current_Status[1]*100,y=res.list[[i]]$alpha))
+    size.hcr.points<- c(size.hcr.points, (5-(i-1)))
+  }
+  col.hcr.points <- seq(2,1+length(res.list))
+
+  for(i in 1:length(res.list)){
       res <- res.list[[i]]
       data_BRP <- tibble(BRP=names(res$BRP),value_obs=res$Obs_BRP,
                          value_ratio=res$BRP)
@@ -1900,15 +1909,23 @@ plot_abc2_difpara <- function(res.list, stock.name=NULL, fishseason=0, detABC=0,
         stat_function(fun=type2_func_empir_wrapper,
                       args=list(BT=BT,PL=PL,PB=PB,tune.par=tune.par,beta=beta,AAV=res$AAV,cpue=ccdata.plot$cpue,simple=simple.empir,type="%"),
                       color=rgb(0+((i-1)/5),0+((i-1)/5),0+((i-1)/5)),size=1,linetype="solid")
-
-      g.hcr <- g.hcr + geom_point(aes(x=res.list[[i]]$Current_Status[1]*100,y=res.list[[i]]$alpha),color=i+1,size=(5-(i-1))) +
+      g.hcr <- g.hcr +
         geom_vline(data=data_BRP,mapping=aes(xintercept=value_ratio*100,color=BRP), size = 1-((i-1)/5), linetype = ifelse(i==1,"solid",i*11))
 
-    }
+  }
     g.hcr <- g.hcr +
-      ggrepel::geom_label_repel(data=data_BRP,                                              mapping=aes(x=value_ratio*100, y=c(1.2,1.0,0.8), label=legend.labels.hcr),
+      geom_point(data=Currentalphas,aes(x=x,y=y),color=col.hcr.points,size=size.hcr.points)
+    if(isTRUE(stringr::str_detect(version$os, pattern="darwin"))){
+    g.hcr <- g.hcr+
+      ggrepel::geom_label_repel(data=data_BRP,                                              mapping=aes(x=value_ratio*100, y=c(0.5,0.4,0.8), label=legend.labels.hcr,family = font_MAC),
                                 box.padding=0.5)+
       scale_color_manual(name="",values=rev(c(col.BRP)),guide="none") #label=rev(legend.labels.hcr))
+    }else{
+      g.hcr <- g.hcr+
+        ggrepel::geom_label_repel(data=data_BRP,                                              mapping=aes(x=value_ratio*100, y=c(0.5,0.4,0.8), label=legend.labels.hcr),
+                                  box.padding=0.5)+
+        scale_color_manual(name="",values=rev(c(col.BRP)),guide="none") #label=rev(legend.labels.hcr))
+    }
 
   # 漁獲量のトレンドとABC ----
   CatchABC<-seq(1:(length(res.list)+1))
