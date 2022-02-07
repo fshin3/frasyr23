@@ -33,13 +33,18 @@ for(i in 1:length(Stocks)){
 }
 
 #ABCs1st<-ABCs
-#ABCs2nd<-ABCs
+ABCs2nd<-ABCs
 #ABCsdefault<-ABCs
 save(ABCs1st,file = "./tools/seqOutABCs_bt5best.rda")
-save(ABCs2st,file = "./tools/seqOutABCs_bt52ndbest.rda")
+save(ABCs2nd,file = "./tools/seqOutABCs_bt52ndbest.rda")
 save(ABCsdefault,file = "./tools/seqOutABCs_default.rda")
 
-# for(i in 1:length(Stocks)){
-#   if(is.null(ABCs[[i]])) next
-#
-# }
+#load("./tools/seqOutABCs_bt5best.rda")
+#load("./tools/seqOutABCs_bt52ndbest.rda")
+#load("./tools/seqOutABCs_default.rda")
+
+for(i in 1:length(Stocks)){
+  if(is.null(ABCs[[i]])) next
+  ABCdev<-ABCs1st[[i]]$ABCdeviation
+  Catchdev<-ABCs1st[[i]]$Catch5yrdeviation
+}
