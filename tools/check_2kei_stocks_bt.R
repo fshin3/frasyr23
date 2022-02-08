@@ -1,5 +1,5 @@
 library(tidyverse)
-datafile <- read.csv("~/GoogleFRAdrive/2-kei-issues/type2_data.csv")
+datafile <- read.csv("~/SkyDrive/2-kei-issues/type2_data.csv")
 
 Stocks <-unique(datafile$Stock)
 
@@ -33,18 +33,31 @@ for(i in 1:length(Stocks)){
 }
 
 #ABCs1st<-ABCs
-ABCs2nd<-ABCs
+#ABCs2nd<-ABCs
 #ABCsdefault<-ABCs
 save(ABCs1st,file = "./tools/seqOutABCs_bt5best.rda")
 save(ABCs2nd,file = "./tools/seqOutABCs_bt52ndbest.rda")
 save(ABCsdefault,file = "./tools/seqOutABCs_default.rda")
 
-#load("./tools/seqOutABCs_bt5best.rda")
-#load("./tools/seqOutABCs_bt52ndbest.rda")
-#load("./tools/seqOutABCs_default.rda")
+load("./tools/seqOutABCs_bt5best.rda")
+load("./tools/seqOutABCs_bt52ndbest.rda")
+load("./tools/seqOutABCs_default.rda")
+
 
 for(i in 1:length(Stocks)){
-  if(is.null(ABCs[[i]])) next
-  ABCdev<-ABCs1st[[i]]$ABCdeviation
-  Catchdev<-ABCs1st[[i]]$Catch5yrdeviation
+  if(is.null(ABCs1st[[i]])) next
+  labels <-ABCs1st[[i]]$label
+  defaultABCdev<-ABCsdefault[[i]]$ABCdeviation
+  defaultCatchdev<-ABCsdefault[[i]]$Catch5yrdeviation
+  bt51stABCdev<-ABCs1st[[i]]$ABCdeviation
+  bt51stCatchdev<-ABCs1st[[i]]$Catch5yrdeviation
+  bt52ndABCdev<-ABCs2nd[[i]]$ABCdeviation
+  bt52ndCatchdev<-ABCs2nd[[i]]$Catch5yrdeviation
+  ABCDevs<-data.frame(label=labels,baseABCdev=defaultABCdev,fix1ABCdev=bt51stABCdev,fix2ABCdev=bt52ndABCdev,baseCatchdev=defaultCatchdev,fix1Catchdev=bt51stCatchdev,fix2Catchdev=bt52ndCatchdev)
+  filename<-paste0("~/Desktop/2kei-stocks/",Stocks[i],".csv")
+  write.csv(ABCDevs,file = filename)
+
+  gg.ABCdev <- ggplot(data=data.frame(X=c(-1,1))) +
+                geom_point(x=ABCDevs$label,y=ABCDevs$baseABCdev)
+
 }
