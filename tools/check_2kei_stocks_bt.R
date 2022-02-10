@@ -1,5 +1,6 @@
 library(tidyverse)
 datafile <- read.csv("~/OneDrive/2-kei-issues/type2_data.csv")
+font_MAC <- "HiraginoSans-W3"#"Japan1GothicBBB"#
 
 Stocks <-unique(datafile$Stock)
 
@@ -17,6 +18,7 @@ parameans <- c("default","best","2ndbest")
 for(j in 1:length(tune.pars)){
 
 ABCs<-list()
+Stock.abc.status<-list()
 n.catch<-5
 for(i in 1:length(Stocks)){
   if(max(ccdata.stock[[i]]$Year)-min(ccdata.stock[[i]]$Year)<=4) next
@@ -29,6 +31,7 @@ for(i in 1:length(Stocks)){
   #resabc2 <-calc_abc2(ccdata,summary_abc = F)
   graph_abc2 <-plot_abc2_fixHC_seqOut(resabc2)
   ABCs[[i]]<-graph_abc2[[1]]
+  Stock.abc.status[[i]]<-graph_abc2[[3]]
   ABCs[[i]]$stock <- rep(Stocks[i],nrow(ABCs[[i]]))
   ABCs[[i]]$tunepar <- rep(str_c(paste0(tune.pars[[j]][1],"-",tune.pars[[j]][2],"-",tune.pars[[j]][3])),nrow(ABCs[[i]]))
   ABCs[[i]]$ABCdeviation <- (ABCs[[i]]$ABC-ABCs[[i]]$ABC[1])/ABCs[[i]]$ABC[1]
@@ -41,9 +44,12 @@ for(i in 1:length(Stocks)){
   #ggsave(width=420,height=150,dpi=200,units="mm", graph_abc2[[3]],file=filename)
 }
 
-if(j==1) ABCsdefault<-ABCs
-else if(j==2) ABCs1st<-ABCs
-else ABCs2nd<-ABCs
+if(j==1) {ABCsdefault<-ABCs
+Stock.abc.status.default<-Stock.abc.status}
+else if(j==2) {ABCs1st<-ABCs
+Stock.abc.status1st<-Stock.abc.status}
+else {ABCs2nd<-ABCs
+Stock.abc.status2nd<-Stock.abc.status}
 }
 
 save(ABCs1st,file = "./tools/seqOutABCs_bt5best.rda")
@@ -70,6 +76,7 @@ for(i in 1:length(Stocks)){
   }
 }
 
+Dev.combined<-list()
 for(i in 1:length(Stocks)){
   if(is.null(ABCs1st[[i]])) next
   labels <-ABCs1st[[i]]$label
@@ -79,11 +86,30 @@ for(i in 1:length(Stocks)){
   bt51stCatchdev<-ABCs1st[[i]]$Catch5yrdeviation
   bt52ndABCdev<-ABCs2nd[[i]]$ABCdeviation
   bt52ndCatchdev<-ABCs2nd[[i]]$Catch5yrdeviation
-  ABCDevs<-data.frame(label=labels,baseABCdev=defaultABCdev,fix1ABCdev=bt51stABCdev,fix2ABCdev=bt52ndABCdev,baseCatchdev=defaultCatchdev,fix1Catchdev=bt51stCatchdev,fix2Catchdev=bt52ndCatchdev)
+  ABCDevs<-data.frame(label=labels,baseABC=defaultABCdev,HCyrfix1ABC=bt51stABCdev,HCyrfix2ABC=bt52ndABCdev,baseCatch=defaultCatchdev,HCyrfix1Catch=bt51stCatchdev,HCyrfix2Catch=bt52ndCatchdev)
   filename<-paste0("~/Desktop/2kei-stocks/",Stocks[i],".csv")
   #write.csv(ABCDevs,file = filename)
 
-  gg.ABCdev <- ggplot(data=data.frame(X=c(-1,1))) +
-                geom_point(y=ABCDevs$baseABCdev)
+  ggfilename<-paste0("~/Desktop/2kei-stocks/",Stocks[i],".png")
 
+  ABCdevtibble<-ABCDevs %>%
+         pivot_longer(cols=c(baseABC,HCyrfix1ABC,HCyrfix2ABC),names_to  = "Par.Setting", values_to = "Deviances")
+  Catchdevtibble<-ABCDevs %>%
+    pivot_longer(cols=c(baseCatch,HCyrfix1Catch,HCyrfix2Catch),names_to  = "Par.Setting", values_to = "Deviances")
+
+  gg.ABCdev <- ggplot(ABCdevtibble,aes(x=Par.Setting ,y= Deviances,fill=label,color=label)) +
+                geom_dotplot(binaxis = "y")+
+    theme(legend.position="top",legend.justification = c(1,0)) + ggtitle("ABCの比較")+
+    xlab("パラメータ設定")+ylab(str_c("0年前基準からの偏差"))+
+    theme(text = element_text(family = font_MAC))
+
+  gg.Catchdev <- ggplot(Catchdevtibble,aes(x=Par.Setting ,y= Deviances,fill=label,color=label)) +
+    geom_dotplot(binaxis = "y")+
+    theme(legend.position="none",legend.justification = c(1,0)) + ggtitle("5年平均漁獲量の比較")+
+    xlab("パラメータ設定")+ylab(str_c(""))+
+    theme(text = element_text(family = font_MAC))
+
+  Dev.combined[[i]] <- gridExtra::grid.arrange(gg.ABCdev,gg.Catchdev,ncol=2,top=Stocks[i])
 }
+
+ggsave(Dev.combined[[i]],file=ggfilename)
