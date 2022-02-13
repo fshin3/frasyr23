@@ -110,6 +110,8 @@ for(i in 1:length(Stocks)){
     theme(text = element_text(family = font_MAC))
 
   Dev.combined[[i]] <- gridExtra::grid.arrange(gg.ABCdev,gg.Catchdev,ncol=2,top=Stocks[i])
+
+  ggsave(Dev.combined[[i]],width = 100,height=400,file=ggfilename)
+
 }
 
-ggsave(Dev.combined[[i]],file=ggfilename)
