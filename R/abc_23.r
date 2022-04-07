@@ -1217,7 +1217,7 @@ plot_hcr3 <- function(res.list,stock.name=NULL,proposal=TRUE){
           ggrepel::geom_label_repel(data=data_BRP,
                                     mapping=aes(x=value_ratio*100, y=1.1, label=legend.labels.hcr),
                                     box.padding=0.5, nudge_y=1)+
-          scale_color_manual(name="",values=rev(c(col.BRP)),guide=FALSE)) #labels=rev(c(legend.labels.hcr))))
+          scale_color_manual(name="",values=rev(c(col.BRP)),guide="none")) #labels=rev(c(legend.labels.hcr))))
       if(isTRUE(stringr::str_detect(version$os, pattern="darwin"))){ # plot setting for mac----
         (g.hcr <- g.hcr +
            stat_function(fun=type3_func_wrapper,
@@ -1228,7 +1228,7 @@ plot_hcr3 <- function(res.list,stock.name=NULL,proposal=TRUE){
            ggrepel::geom_label_repel(data=data_BRP,
                                      mapping=aes(x=value_ratio*100, y=1.1, label=legend.labels.hcr, family=font_MAC),
                                      box.padding=0.5, nudge_y=1)+
-           scale_color_manual(name="",values=rev(c(col.BRP)),guide=FALSE)) #labels=rev(c(legend.labels.hcr))))}
+           scale_color_manual(name="",values=rev(c(col.BRP)),guide="none")) #labels=rev(c(legend.labels.hcr))))}
       }
     }
 
@@ -1849,7 +1849,7 @@ plot_abc2_fixTerminalCPUE_seqOut <- function(res, stock.name=NULL, fishseason=0,
       ggrepel::geom_label_repel(data=data_BRP,
                                 mapping=aes(x=value_ratio*100, y=c(0.5,0.4), label=legend.labels),
                                 box.padding=0.5)+ #, nudge_y=1
-      scale_color_manual(name="",values=rev(c(col.BRP)), guide=FALSE)+#,labels=rev(c(legend.labels)))+
+      scale_color_manual(name="",values=rev(c(col.BRP)), guide="none")+#,labels=rev(c(legend.labels)))+
       theme_bw()+theme_custom()+
       ggtitle("")+
       xlab("資源量水準(%)")+ylab(str_c("漁獲量を増減させる係数"))+
