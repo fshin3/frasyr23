@@ -1,5 +1,5 @@
 library(tidyverse)
-datafile <- read.csv("~/SkyDrive/2-kei-issues/type2_data.csv")
+datafile <- read.csv("~/OneDrive/2-kei-issues/type2_data.csv")
 font_MAC <- "HiraginoSans-W3"#"Japan1GothicBBB"#
 
 Stocks <-unique(datafile$Stock)
@@ -77,10 +77,15 @@ Stock.abc.status3rd<-Stock.abc.status}
 save(ABCs1st,file = "./tools/seqOutABCs_empir_bt51st.rda")
 save(ABCs2nd,file = "./tools/seqOutABCs_empir_bt52nd.rda")
 save(ABCs2nd,file = "./tools/seqOutABCs_empir_bt53rd.rda")
+#
+# load("./tools/seqOutABCs_bt5best.rda")
+# load("./tools/seqOutABCs_bt52ndbest.rda")
+ load("./tools/seqOutABCs_default.rda")
 
-load("./tools/seqOutABCs_bt5best.rda")
-load("./tools/seqOutABCs_bt52ndbest.rda")
-load("./tools/seqOutABCs_default.rda")
+
+load("./tools/seqOutABCs_empir_bt51st.rda")
+load("./tools/seqOutABCs_empir_bt52nd.rda")
+load("./tools/seqOutABCs_empir_bt53rd.rda")
 
 # check diffs in indices between default and bt5yr opt
 ABC1dif <- ABC2dif <- Catch1dif <- Catch2dif <-0
@@ -109,10 +114,10 @@ for(i in 1:length(Stocks)){
   bt52ndABCdev<-ABCs2nd[[i]]$ABCdeviation
   bt52ndCatchdev<-ABCs2nd[[i]]$Catch5yrdeviation
   ABCDevs<-data.frame(label=labels,baseABC=defaultABCdev,HCyrfix1ABC=bt51stABCdev,HCyrfix2ABC=bt52ndABCdev,baseCatch=defaultCatchdev,HCyrfix1Catch=bt51stCatchdev,HCyrfix2Catch=bt52ndCatchdev)
-  filename<-paste0("~/Desktop/2kei-stocks/",Stocks[i],".csv")
+  filename<-paste0("~/Desktop/2kei-stocks/",Stocks[i],"_empir.csv")
   #write.csv(ABCDevs,file = filename)
 
-  ggfilename<-paste0("~/Desktop/2kei-stocks/",Stocks[i],".png")
+  ggfilename<-paste0("~/Desktop/2kei-stocks/",Stocks[i],"_empir.png")
 
   ABCdevtibble<-ABCDevs %>%
          pivot_longer(cols=c(baseABC,HCyrfix1ABC,HCyrfix2ABC),names_to  = "Par.Setting", values_to = "Deviances")
