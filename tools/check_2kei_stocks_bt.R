@@ -10,17 +10,17 @@ for(i in 1:length(unique(datafile$Stock))){
 }
 
 tune.pars <- list()
-# base case
-# tune.pars[[1]] <-c(0.5,0.4,0.4)
-# tune.pars[[2]] <-c(0.1,0.5,0.9)
-# tune.pars[[3]] <-c(0.4,0.4,0.8)
-# parameans <- c("default","best","2ndbest")
+#base case
+tune.pars[[1]] <-c(0.5,0.4,0.4)
+tune.pars[[2]] <-c(0.1,0.5,0.9)
+tune.pars[[3]] <-c(0.4,0.4,0.8)
+parameans <- c("default","best","2ndbest")
 
 # scenario3,6,9 best (empir)
-tune.pars[[1]] <-c(0.5,0.2,0.6)
-tune.pars[[2]] <-c(0.5,0.2,0.7)
-tune.pars[[3]] <-c(0.4,0.2,0.8)
-parameans <- c("best","2nd","3rd")
+# tune.pars[[1]] <-c(0.5,0.2,0.6)
+# tune.pars[[2]] <-c(0.5,0.2,0.7)
+# tune.pars[[3]] <-c(0.4,0.2,0.8)
+# parameans <- c("best","2nd","3rd")
 
 for(j in 1:length(tune.pars)){
 
@@ -34,7 +34,8 @@ for(i in 1:length(Stocks)){
   cpuetmp <- cpuetmp[-na.omit(cpuetmp)]
   if(length(cpuetmp) <=4 ) next
   ccdata<-data.frame(year=ccdata.stock[[i]]$Year,cpue=ccdata.stock[[i]]$CPUE,catch=ccdata.stock[[i]]$Catch)
-  filename<-paste0("~/Desktop/2kei-stocks/",Stocks[i],"_empir_",parameans[j],"_bt5year.png")
+  filename<-paste0("~/Desktop/2kei-stocks/",Stocks[i],"_",parameans[j],"_bt5year.png")
+  #filename<-paste0("~/Desktop/2kei-stocks/",Stocks[i],"_empir_",parameans[j],"_bt5year.png")
   resabc2 <-calc_abc2(ccdata,BTyear=(max(ccdata$year)-4),empir.dist = T,tune.par = tune.pars[[j]],summary_abc = F)
   #resabc2 <-calc_abc2(ccdata,summary_abc = F)
   graph_abc2 <-plot_abc2_fixTerminalCPUE_seqOut(resabc2)
@@ -53,39 +54,38 @@ for(i in 1:length(Stocks)){
 }
 
 # base case
-# if(j==1) {ABCsdefault<-ABCs
-# Stock.abc.status.default<-Stock.abc.status}
-# else if(j==2) {ABCs1st<-ABCs
-# Stock.abc.status1st<-Stock.abc.status}
-# else {ABCs2nd<-ABCs
-# Stock.abc.status2nd<-Stock.abc.status}
-# }
-
-# scen369 top3 empir
-if(j==1) {ABCs1st<-ABCs
+if(j==1) {ABCsdefault<-ABCs
+Stock.abc.status.default<-Stock.abc.status}
+else if(j==2) {ABCs1st<-ABCs
 Stock.abc.status1st<-Stock.abc.status}
-else if(j==2) {ABCs2nd<-ABCs
+else {ABCs2nd<-ABCs
 Stock.abc.status2nd<-Stock.abc.status}
-else {ABCs3rd<-ABCs
-Stock.abc.status3rd<-Stock.abc.status}
 }
 
-# save(ABCs1st,file = "./tools/seqOutABCs_bt5best.rda")
-# save(ABCs2nd,file = "./tools/seqOutABCs_bt52ndbest.rda")
-# save(ABCsdefault,file = "./tools/seqOutABCs_default.rda")
+# scen369 top3 empir
+# if(j==1) {ABCs1st<-ABCs
+# Stock.abc.status1st<-Stock.abc.status}
+# else if(j==2) {ABCs2nd<-ABCs
+# Stock.abc.status2nd<-Stock.abc.status}
+# else {ABCs3rd<-ABCs
+# Stock.abc.status3rd<-Stock.abc.status}
+# }
 
-save(ABCs1st,file = "./tools/seqOutABCs_empir_bt51st.rda")
-save(ABCs2nd,file = "./tools/seqOutABCs_empir_bt52nd.rda")
-save(ABCs2nd,file = "./tools/seqOutABCs_empir_bt53rd.rda")
+save(ABCs1st,file = "./tools/seqOutABCs_bt5best.rda")
+save(ABCs2nd,file = "./tools/seqOutABCs_bt52ndbest.rda")
+save(ABCsdefault,file = "./tools/seqOutABCs_default.rda")
+
+# save(ABCs1st,file = "./tools/seqOutABCs_empir_bt51st.rda")
+# save(ABCs2nd,file = "./tools/seqOutABCs_empir_bt52nd.rda")
+# save(ABCs2nd,file = "./tools/seqOutABCs_empir_bt53rd.rda")
 #
-# load("./tools/seqOutABCs_bt5best.rda")
-# load("./tools/seqOutABCs_bt52ndbest.rda")
- load("./tools/seqOutABCs_default.rda")
+load("./tools/seqOutABCs_bt5best.rda")
+load("./tools/seqOutABCs_bt52ndbest.rda")
+load("./tools/seqOutABCs_default.rda")
 
-
-load("./tools/seqOutABCs_empir_bt51st.rda")
-load("./tools/seqOutABCs_empir_bt52nd.rda")
-load("./tools/seqOutABCs_empir_bt53rd.rda")
+# load("./tools/seqOutABCs_empir_bt51st.rda")
+# load("./tools/seqOutABCs_empir_bt52nd.rda")
+# load("./tools/seqOutABCs_empir_bt53rd.rda")
 
 # check diffs in indices between default and bt5yr opt
 ABC1dif <- ABC2dif <- Catch1dif <- Catch2dif <-0
