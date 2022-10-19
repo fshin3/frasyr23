@@ -1531,7 +1531,7 @@ plot_hcr2 <- function(res.list,stock.name=NULL,proposal=TRUE, hline="none", hsca
       linetype.set<-unlist(linetype.sets)
       line.size <- unlist(line.sizes)
       label.hlevel <- unlist(label.hlevels)
-      boxpaddings<-0.5 #resごとに1ずつずらす
+      boxpaddings<-0.5
       if(isTRUE(stringr::str_detect(version$os, pattern="darwin"))){ # for mac
         if(vlineBan){
             g.hcr <- g.hcr +
@@ -1879,8 +1879,8 @@ plot_abc2_multires <- function(res.list, stock.name=NULL, fishseason=0, detABC=0
       stat_function(fun=type2_func_empir_wrapper,
                     args=list(BT=BT,PL=PL,PB=PB,tune.par=tune.par,beta=beta,AAV=res$AAV,cpue=ccdata.plot$cpue,simple=simple.empir,type="%"),
                     color=rgb(0+((i-1)/5),0+((i-1)/5),0+((i-1)/5)),size=1,linetype="solid")
-    g.hcr <- g.hcr +
-      geom_vline(data=data_BRP,mapping=aes(xintercept=value_ratio*100,color=BRP), size = 1-((i-1)/5), linetype = ifelse(i==1,"solid",i*11))
+    #g.hcr <- g.hcr +
+      #geom_vline(data=data_BRP,mapping=aes(xintercept=value_ratio*100,color=BRP), size = 1-((i-1)/5), linetype = ifelse(i==1,"solid",i*11))
 
   }
 
@@ -1941,7 +1941,7 @@ plot_abc2_multires <- function(res.list, stock.name=NULL, fishseason=0, detABC=0
   linetype.set<-unlist(linetype.sets)
   line.size <- unlist(line.sizes)
   label.hlevel <- unlist(label.hlevels)
-  boxpaddings<-0.5 #resごとに1ずつずらす
+  boxpaddings<-0.5
   if(isTRUE(stringr::str_detect(version$os, pattern="darwin"))){ # for mac
     if(hcrvlineBan){
       g.hcr <- g.hcr +
@@ -1961,17 +1961,18 @@ plot_abc2_multires <- function(res.list, stock.name=NULL, fishseason=0, detABC=0
     if(hcrvlineBan){
       g.hcr <- g.hcr +
         geom_vline(data=data_BRP,mapping=aes(xintercept=value_ratio*100,color=BRP), size = line.size, linetype = linetype.set) +
+        scale_color_manual(name="",values=rev(c(col.BRP.hcr)),guide="none") +
         ggrepel::geom_label_repel(data=data_BRP,
                                   mapping=aes(x=value_ratio*100, y=label.hlevel,label=legend.labels.hcr),
                                   box.padding=boxpaddings)
     }else{
       g.hcr <- g.hcr + geom_vline(data=data_BRP,mapping=aes(xintercept=value_ratio*100,color=BRP), size = line.size, linetype = linetype.set)+
+        scale_color_manual(name="",values=rev(c(col.BRP.hcr)),guide="none") +
         ggrepel::geom_label_repel(data=data_BRP,
                                   mapping=aes(x=value_ratio*100, y=label.hlevel, label=legend.labels.hcr),
                                   box.padding=boxpaddings)
-    }
   }
-
+  }
   # if(isTRUE(stringr::str_detect(version$os, pattern="darwin"))){
   #   if(hcrvlineBan) g.hcr <- g.hcr+
   #     ggrepel::geom_label_repel(data=data_BRP,                                              mapping=aes(x=value_ratio*100, y=c(0.5,1.15,0.8), label=legend.labels.hcr,family = font_MAC),
