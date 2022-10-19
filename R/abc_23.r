@@ -1456,9 +1456,8 @@ plot_hcr2 <- function(res.list,stock.name=NULL,proposal=TRUE, hline="none", hsca
   if(vline==TRUE){
     # 一つのHCRの水準線を選択
     if(vline.listnum!=0){
-      vline.num<-vline.listnum
-      if(!is.null(label.list)) legend.labels.hcr <-paste0(label.list[vline.num]," ",legend.labels.hcr)
-      res <- res.list[[vline.num]]
+      if(!is.null(label.list)) legend.labels.hcr <-paste0(label.list[vline.listnum]," ",legend.labels.hcr)
+      res <- res.list[[vline.listnum]]
       if(vlineBan==TRUE) data_BRP <- tibble(BRP=names(res$BRP),value_obs=res$Obs_BRP,
                                             value_ratio=res$BRP)
       else data_BRP <- tibble(BRP=names(res$BRP[-3]),value_obs=res$Obs_BRP[-3],
@@ -1698,7 +1697,7 @@ theme_custom <- function(){
 #' @param ignore_naCatch_point ABC算出に使う最近年の漁獲量にNAが入っている場合、表示上NAとなる年のポイントと年数を引く
 #' @export
 #'
-plot_abc2_multires <- function(res.list, stock.name=NULL, fishseason=0, detABC=0, abc4=FALSE, cpueunit="", fillarea=FALSE, RP=TRUE, leftalign=FALSE, proposal=TRUE, hcrdist=FALSE,BThcr=FALSE,hcrhline="none",hcrhscale="middle",hcrvlineBan=FALSE,plotexactframe=FALSE,ignore_naCatch_point=FALSE,abclegend=NULL){
+plot_abc2_multires <- function(res.list, stock.name=NULL, fishseason=0, detABC=0, abc4=FALSE, cpueunit="", fillarea=FALSE, RP=TRUE, leftalign=FALSE, proposal=TRUE, hcrdist=FALSE,BThcr=FALSE,hcrhline="none",hcrhscale="middle",hcrvlineBan=FALSE,label.list=NULL,plotexactframe=FALSE,ignore_naCatch_point=FALSE,abclegend=NULL){
   font_MAC <- "HiraginoSans-W3"#"Japan1GothicBBB"#
 
   #結果比較の限界は５個まで
@@ -1904,25 +1903,94 @@ plot_abc2_multires <- function(res.list, stock.name=NULL, fishseason=0, detABC=0
   g.hcr <- g.hcr +
     geom_point(data=Currentalphas,aes(x=x,y=y),color=col.hcr.points,size=size.hcr.points)
 
-  if(isTRUE(stringr::str_detect(version$os, pattern="darwin"))){
-    if(hcrvlineBan) g.hcr <- g.hcr+
-      ggrepel::geom_label_repel(data=data_BRP,                                              mapping=aes(x=value_ratio*100, y=c(0.5,1.15,0.8), label=legend.labels.hcr,family = font_MAC),
-                                box.padding=0.5)+
-      scale_color_manual(name="",values=rev(c(col.BRP.hcr)),guide="none") #label=rev(legend.labels.hcr))
-    else g.hcr <- g.hcr+
-        ggrepel::geom_label_repel(data=data_BRP,                                              mapping=aes(x=value_ratio*100, y=c(0.5,1.15), label=legend.labels.hcr,family = font_MAC),
-                                  box.padding=0.5)+
-        scale_color_manual(name="",values=rev(c(col.BRP.hcr)),guide="none") #label=rev(legend.labels.hcr))
-  }else{
-    if(hcrvlineBan) g.hcr <- g.hcr+
-      ggrepel::geom_label_repel(data=data_BRP,                                              mapping=aes(x=value_ratio*100, y=c(0.5,1.15,0.8), label=legend.labels.hcr),
-                                box.padding=0.5)+
-      scale_color_manual(name="",values=rev(c(col.BRP.hcr)),guide="none") #label=rev(legend.labels.hcr))
-    else g.hcr <- g.hcr+
-        ggrepel::geom_label_repel(data=data_BRP,                                              mapping=aes(x=value_ratio*100, y=c(0.5,1.15), label=legend.labels.hcr),
-                                  box.padding=0.5)+
-        scale_color_manual(name="",values=rev(c(col.BRP.hcr)),guide="none") #label=rev(legend.labels.hcr))
+  data_BRPs <-list()
+  legend.labels<-list()
+  linetype.sets<-list()
+  line.sizes<-list()
+  label.hlevels<-list()
+  data_BRP<-c()
+  if(hcrvlineBan) label.hlevel<-c(0.8,0.4,1.15) #rep
+  else label.hlevel<-c(0.8,0.4) #rep
+  for(i in 1:length(res.list)){
+    res<-res.list[[i]]
+    if(hcrvlineBan==T) data_BRPs[[i]] <- tibble(reslist=i,BRP=names(res$BRP),value_obs=res$Obs_BRP,
+                                             value_ratio=res$BRP)
+    else data_BRPs[[i]] <- tibble(reslist=i,BRP=names(res$BRP[-3]),value_obs=res$Obs_BRP[-3],
+                                  value_ratio=res$BRP[-3])
+    if(is.null(label.list)) legend.labels[[i]] <-paste0(legend.labels.hcr,i)
+    else legend.labels[[i]] <-paste0(label.list[i]," ",legend.labels.hcr)
+    linetype.sets[[i]] <- rep((i+1),nrow(data_BRPs[[i]]))
+    line.sizes[[i]]<- rep(0.5*length(res.list)/i,nrow(data_BRPs[[i]]))
+    label.hlevels[[i]]<-label.hlevel-0.1*(i-1)
+    data_BRP<-rbind(data_BRP,data_BRPs[[i]])
   }
+  if(hcrvlineBan==T) {
+    flagBan<-c()
+    for(i in 1:length(res.list)){
+      flagBan <- c(flagBan, data_BRPs[[i]]$value_ratio[3])
+    }
+    if(sum(flagBan)==0){
+      legend.labels[[1]][3]<-legend.labels.hcr[3]
+      linetype.sets[[1]][3] <-1
+      for(i in 2:length(res.list)){
+        legend.labels[[i]][3]<-""
+      }
+    }
+  }
+  legend.labels.hcr<-unlist(legend.labels)
+  linetype.set<-unlist(linetype.sets)
+  line.size <- unlist(line.sizes)
+  label.hlevel <- unlist(label.hlevels)
+  boxpaddings<-0.5 #resごとに1ずつずらす
+  if(isTRUE(stringr::str_detect(version$os, pattern="darwin"))){ # for mac
+    if(hcrvlineBan){
+      g.hcr <- g.hcr +
+        geom_vline(data=data_BRP,mapping=aes(xintercept=value_ratio*100,color=BRP), size = line.size, linetype = linetype.set) +
+        scale_color_manual(name="",values=rev(c(col.BRP.hcr)),guide="none") +
+        ggrepel::geom_label_repel(data=data_BRP,
+                                  mapping=aes(x=value_ratio*100, y=label.hlevel,label=legend.labels.hcr,family=font_MAC),
+                                  box.padding=boxpaddings)
+    }else{
+      g.hcr <- g.hcr + geom_vline(data=data_BRP,mapping=aes(xintercept=value_ratio*100,color=BRP), size = line.size, linetype = linetype.set)+
+        scale_color_manual(name="",values=rev(c(col.BRP.hcr)),guide="none") +
+        ggrepel::geom_label_repel(data=data_BRP,
+                                  mapping=aes(x=value_ratio*100, y=label.hlevel, label=legend.labels.hcr,family=font_MAC),
+                                  box.padding=boxpaddings)
+    }
+  }else{ # for !mac
+    if(hcrvlineBan){
+      g.hcr <- g.hcr +
+        geom_vline(data=data_BRP,mapping=aes(xintercept=value_ratio*100,color=BRP), size = line.size, linetype = linetype.set) +
+        ggrepel::geom_label_repel(data=data_BRP,
+                                  mapping=aes(x=value_ratio*100, y=label.hlevel,label=legend.labels.hcr),
+                                  box.padding=boxpaddings)
+    }else{
+      g.hcr <- g.hcr + geom_vline(data=data_BRP,mapping=aes(xintercept=value_ratio*100,color=BRP), size = line.size, linetype = linetype.set)+
+        ggrepel::geom_label_repel(data=data_BRP,
+                                  mapping=aes(x=value_ratio*100, y=label.hlevel, label=legend.labels.hcr),
+                                  box.padding=boxpaddings)
+    }
+  }
+
+  # if(isTRUE(stringr::str_detect(version$os, pattern="darwin"))){
+  #   if(hcrvlineBan) g.hcr <- g.hcr+
+  #     ggrepel::geom_label_repel(data=data_BRP,                                              mapping=aes(x=value_ratio*100, y=c(0.5,1.15,0.8), label=legend.labels.hcr,family = font_MAC),
+  #                               box.padding=0.5)+
+  #     scale_color_manual(name="",values=rev(c(col.BRP.hcr)),guide="none") #label=rev(legend.labels.hcr))
+  #   else g.hcr <- g.hcr+
+  #       ggrepel::geom_label_repel(data=data_BRP,                                              mapping=aes(x=value_ratio*100, y=c(0.5,1.15), label=legend.labels.hcr,family = font_MAC),
+  #                                 box.padding=0.5)+
+  #       scale_color_manual(name="",values=rev(c(col.BRP.hcr)),guide="none") #label=rev(legend.labels.hcr))
+  # }else{
+  #   if(hcrvlineBan) g.hcr <- g.hcr+
+  #     ggrepel::geom_label_repel(data=data_BRP,                                              mapping=aes(x=value_ratio*100, y=c(0.5,1.15,0.8), label=legend.labels.hcr),
+  #                               box.padding=0.5)+
+  #     scale_color_manual(name="",values=rev(c(col.BRP.hcr)),guide="none") #label=rev(legend.labels.hcr))
+  #   else g.hcr <- g.hcr+
+  #       ggrepel::geom_label_repel(data=data_BRP,                                              mapping=aes(x=value_ratio*100, y=c(0.5,1.15), label=legend.labels.hcr),
+  #                                 box.padding=0.5)+
+  #       scale_color_manual(name="",values=rev(c(col.BRP.hcr)),guide="none") #label=rev(legend.labels.hcr))
+  # }
 
   # 漁獲量のトレンドとABC ----
   CatchABC<-c(1,rev(seq(2,(length(res.list)+1))))
